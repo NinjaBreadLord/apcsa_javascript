@@ -16,9 +16,7 @@
   
 
   
-
-  
-      ,"page3": {
+      ,"page2": {
           "title": "APCSA Notes",
           "content": "Vocab and notes on APCSA concepts throughout 2022-2023 . Table of Contents . Week 1 Notes .",
           "url": "https://ninjabreadlord.github.io/chengstocks/notes/",
@@ -51,7 +49,7 @@
   
 
   
-      ,"page12": {
+      ,"page11": {
           "title": "",
           "content": "Sitemap: {{ “sitemap.xml” | absolute_url }} | .",
           "url": "https://ninjabreadlord.github.io/chengstocks/robots.txt",
