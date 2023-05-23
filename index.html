@@ -1,87 +1,165 @@
----
-layout: home
-search_exclude: true
-image: images/logo.png
----
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Stocks</title>
-</head>>
+    <meta charset="UTF-8">
+    <title>Team AWAWA</title>
+    {#    <link href="monkeyreaction.css" type="text/css" rel="stylesheet"/>#}
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Raleway');
 
+        :root {}
+
+        body {
+            margin: 0px;
+            padding: 0px;
+            font-family: "Mukta";
+            overflow: hidden;
+            background: #834f33;
+        }
+
+        .main {
+            background: #644725;
+            height: 100%;
+            width: 100%;
+        }
+
+        .main .header h1 {
+            color: white;
+            text-align: center;
+            border-bottom: 2px solid white;
+        }
+
+        .main .navigation {
+            background: #6e503b;
+            width: 100%;
+            height: auto;
+        }
+        .main .navigation h2 {
+            margin: 0;
+            padding: 0;
+            color: white;
+            text-align: center;
+            font-weight: 800;
+        }
+        .main .navigation p {
+            color: white;
+            text-align: center;
+            font-weight: 700;
+        }
+        .main .navigation p span {
+            color: rgb(78, 197, 78);
+        }
+
+        .main .canvas-parent {
+            cursor: pointer;
+            width: 100%;
+            height: 300px;
+            background: rgb(234, 228, 94);
+        }
+        .main .score {
+            background: #a16044;
+            width: 100%;
+            height: auto;
+        }
+
+        .main .score .section-1 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+        .main .score .section-2 {
+            width: 80%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            border: 5px solid rgb(85, 185, 85);
+        }
+        .main .score .section-2 p {
+            padding: 0px 50px 0px 50px;
+            color: white;
+            font-weight: 700;
+            font-size: 36px;
+        }
+
+        .main .score #start{
+            font-size: 24px;
+            margin: 20px auto;
+            width: 50%;
+            height: auto;
+            padding: 20px;
+            border: 2px solid white;
+            color: white;
+            font-weight: 800;
+            background-color: rgb(85, 185, 85);
+        }
+    </style>
+</head>
 <body>
-    <div>
-        <input type="text" id="searchInput" placeholder="Search stock symbol...">
+<div class="main">
+    <div class="header">
+        <h1>Test Your Reaction Speed</h1>
     </div>
-    <script>
-        // Replace YOUR_API_KEY with your actual Alpha Vantage API key
-        const API_KEY = 'RV47R1R4NAW1R356';
-    
-        // Fetch stock data for all stocks
-        $.getJSON(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM,AAPL,GOOGL&apikey=${RV47R1R4NAW1R356}`, function(data) {
-          const stockData = transformStockData(data);
-          displayStockData(stockData);
-        });
-    
-        // Transform and extract necessary data from the API response
-        function transformStockData(data) {
-          const transformedData = [];
-    
-          // Extract stock data for each symbol
-          for (const symbol in data['Time Series (Daily)']) {
-            const stock = {
-              symbol: symbol,
-              price: data['Time Series (Daily)'][symbol]['4. close'],
-              change: data['Time Series (Daily)'][symbol]['4. close'] - data['Time Series (Daily)'][symbol]['1. open'],
-              percentChange: (data['Time Series (Daily)'][symbol]['4. close'] - data['Time Series (Daily)'][symbol]['1. open']) / data['Time Series (Daily)'][symbol]['1. open'] * 100
-            };
-            transformedData.push(stock);
-          }
-    
-          return transformedData;
+
+    <div class="navigation">
+        <h2>Check your time</h2>
+        <p class="information">Click area after the color changes to green</p>
+    </div>
+    <div class="canvas-parent">
+        <canvas id="canvas"></canvas>
+    </div>
+    <div class="score">
+        <div class="section-1">
+            <button id="start" type="button">Start</button>
+        </div>
+        <div class="section-2">
+            <p>Your Time:</p>
+            <p id="time-text">No</p>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    let canvas = document.getElementById('canvas');
+    let context = canvas.getContext('2d');
+    let canvas_parent = document.querySelector('.canvas-parent')
+
+    let parent_height = canvas_parent.clientHeight;
+    let parent_width = canvas_parent.clientWidth;
+
+    canvas.height = parent_height;
+    canvas.width = parent.width;
+
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText('Click in this area', canvas.height / 2, canvas.width / 2);
+
+    let start = document.getElementById('start');
+    let time_text = document.getElementById('time-text');
+
+    let GameStatus = {
+        STOP: 1,
+        START: 2,
+    }
+
+    let status = GameStatus.STOP;
+
+    function end_game(){
+
+    }
+
+    function start_game() {
+
+    }
+
+    start.addEventListener('click', function() {
+        if (status === GameStatus.START){
+            end_game();
+        }else{
+            start_game();
+            this.innerHTML = "Stop Game";
         }
-    
-        // Display stock data on the page
-        function displayStockData(data) {
-          const stockContainer = document.getElementById('stockContainer');
-    
-          // Create a copy of the original data for filtering
-          let filteredData = data.slice();
-    
-          // Display all stocks initially
-          renderStocks(filteredData);
-    
-          // Handle search input
-          document.getElementById('searchInput').addEventListener('input', function() {
-            const searchValue = this.value.trim().toUpperCase();
-    
-            // Filter the data based on search input
-            filteredData = data.filter(stock => stock.symbol.includes(searchValue));
-    
-            // Render the filtered stocks
-            renderStocks(filteredData);
-          });
-    
-          // Render stocks on the page
-          function renderStocks(stocks) {
-            // Clear previous stock data
-            stockContainer.innerHTML = '';
-    
-            if (stocks.length === 0) {
-              stockContainer.innerHTML = '<p>No stocks found.</p>';
-              return;
-            }
-            //d
-            stocks.forEach(stock => {
-              const stockDiv = document.createElement('div');
-              stockDiv.innerHTML = `
-                <h2>${stock.symbol}</h2>
-                <p>Price: ${stock.price}</p>
-                <p>Change: ${stock.change}</p>
-                <p>Percent Change: ${stock.percentChange}</p>
-              `;
-              stockContainer.appendChild(stockDiv);
-            });
-          }
-        }
-      </script>
-</body>>
+    });
+</script>
+</html>
