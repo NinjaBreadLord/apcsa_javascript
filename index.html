@@ -4,12 +4,84 @@ search_exclude: true
 image: images/logo.png
 ---
 
-<center>
-    <h1>Everitt Cheng's fastpages</h1>
-    <p>Fastpages blog site for Everitt Cheng of APCSA 2022</p>
-    <img style='width: 600px; height: 400px;' src='https://static8.depositphotos.com/1192060/1019/i/950/depositphotos_10194222-stock-photo-a-businessman-waving.jpg'>
-    <p>Hello!</p>
+<head>
+    <title>Stocks</title>
+</head>>
 
-</center>
-
-# Posts
+<body>
+    <div>
+        <input type="text" id="searchInput" placeholder="Search stock symbol...">
+    </div>
+    <script>
+        // Replace YOUR_API_KEY with your actual Alpha Vantage API key
+        const API_KEY = 'RV47R1R4NAW1R356';
+    
+        // Fetch stock data for all stocks
+        $.getJSON(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM,AAPL,GOOGL&apikey=${RV47R1R4NAW1R356}`, function(data) {
+          const stockData = transformStockData(data);
+          displayStockData(stockData);
+        });
+    
+        // Transform and extract necessary data from the API response
+        function transformStockData(data) {
+          const transformedData = [];
+    
+          // Extract stock data for each symbol
+          for (const symbol in data['Time Series (Daily)']) {
+            const stock = {
+              symbol: symbol,
+              price: data['Time Series (Daily)'][symbol]['4. close'],
+              change: data['Time Series (Daily)'][symbol]['4. close'] - data['Time Series (Daily)'][symbol]['1. open'],
+              percentChange: (data['Time Series (Daily)'][symbol]['4. close'] - data['Time Series (Daily)'][symbol]['1. open']) / data['Time Series (Daily)'][symbol]['1. open'] * 100
+            };
+            transformedData.push(stock);
+          }
+    
+          return transformedData;
+        }
+    
+        // Display stock data on the page
+        function displayStockData(data) {
+          const stockContainer = document.getElementById('stockContainer');
+    
+          // Create a copy of the original data for filtering
+          let filteredData = data.slice();
+    
+          // Display all stocks initially
+          renderStocks(filteredData);
+    
+          // Handle search input
+          document.getElementById('searchInput').addEventListener('input', function() {
+            const searchValue = this.value.trim().toUpperCase();
+    
+            // Filter the data based on search input
+            filteredData = data.filter(stock => stock.symbol.includes(searchValue));
+    
+            // Render the filtered stocks
+            renderStocks(filteredData);
+          });
+    
+          // Render stocks on the page
+          function renderStocks(stocks) {
+            // Clear previous stock data
+            stockContainer.innerHTML = '';
+    
+            if (stocks.length === 0) {
+              stockContainer.innerHTML = '<p>No stocks found.</p>';
+              return;
+            }
+    
+            stocks.forEach(stock => {
+              const stockDiv = document.createElement('div');
+              stockDiv.innerHTML = `
+                <h2>${stock.symbol}</h2>
+                <p>Price: ${stock.price}</p>
+                <p>Change: ${stock.change}</p>
+                <p>Percent Change: ${stock.percentChange}</p>
+              `;
+              stockContainer.appendChild(stockDiv);
+            });
+          }
+        }
+      </script>
+</body>>
